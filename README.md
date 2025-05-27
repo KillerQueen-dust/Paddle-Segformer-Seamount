@@ -7,7 +7,7 @@ This repository provides a setup and prediction example for using PaddleSeg.
 Clone the repository and install the dependencies:
 
 ```bash
-cd PaddleSeg
+cd Paddle-Segformer-Seamount
 pip install -r requirements.txt
 pip install -v -e .
 ```
