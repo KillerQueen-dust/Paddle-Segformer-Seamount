@@ -1,0 +1,64 @@
+batch_size: 1
+iters: 100000
+
+train_dataset:
+  type: Dataset
+  dataset_root: ../datasets/SRTM/
+  train_path: ../datasets/SRTM/train.txt
+  num_classes: 2
+  img_channels: 1
+  mode: train
+  transforms:
+    - type: ResizeStepScaling
+      min_scale_factor: 0.5
+      max_scale_factor: 2.0
+      scale_step_size: 0.25
+    - type: RandomPaddingCrop
+      crop_size: [ 1024, 1024 ]
+    - type: RandomHorizontalFlip
+#    - type: RandomDistort
+#      brightness_range: 0.5
+#      contrast_range: 0.5
+#      saturation_range: 0.5
+    - type: NormalizeUint16
+
+val_dataset:
+  type: Dataset
+  dataset_root: ../datasets/SRTM/
+  val_path: ../datasets/SRTM/val.txt
+  num_classes: 2
+  img_channels: 1
+  mode: val
+  transforms:
+    - type: NormalizeUint16
+
+optimizer:
+  type: AdamW
+  beta1: 0.9
+  beta2: 0.999
+  weight_decay: 0.01
+
+lr_scheduler:
+  type: PolynomialDecay
+  learning_rate: 0.00006
+  power: 1
+
+loss:
+  types:
+    - type: CrossEntropyLoss
+  coef: [1]
+
+test_config:
+    is_slide: True
+    crop_size: [1024, 1024]
+    stride: [1024, 1024]
+
+model:
+  type: DeepLabV3
+  backbone:
+    in_channels: 1
+    type: ResNet50_vd
+    output_stride: 8
+    multi_grid: [1, 2, 4]
+#    pretrained: https://bj.bcebos.com/paddleseg/dygraph/resnet50_vd_ssld_v2.tar.gz
+  num_classes: 2

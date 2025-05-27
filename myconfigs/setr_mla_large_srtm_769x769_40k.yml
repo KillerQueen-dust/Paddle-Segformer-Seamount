@@ -1,0 +1,69 @@
+batch_size: 1
+iters: 100000
+
+train_dataset:
+  type: Dataset
+  dataset_root: ../datasets/SRTM/
+  train_path: ../datasets/SRTM/train.txt
+  num_classes: 2
+  img_channels: 1
+  mode: train
+  transforms:
+    - type: ResizeStepScaling
+      min_scale_factor: 0.5
+      max_scale_factor: 2.0
+      scale_step_size: 0.25
+    - type: RandomPaddingCrop
+      crop_size: [769, 769]
+    - type: RandomHorizontalFlip
+#    - type: RandomDistort
+#      brightness_range: 0.5
+#      contrast_range: 0.5
+#      saturation_range: 0.5
+    - type: NormalizeUint16
+
+val_dataset:
+  type: Dataset
+  dataset_root: ../datasets/SRTM/
+  val_path: ../datasets/SRTM/val.txt
+  num_classes: 2
+  img_channels: 1
+  mode: val
+  transforms:
+    - type: NormalizeUint16
+
+model:
+  type: SegmentationTransformer
+  backbone:
+    type: ViT_large_patch16_384
+    in_channels: 1
+    pretrained: https://bj.bcebos.com/paddleseg/dygraph/vit_large_patch16_384.tar.gz
+  num_classes: 2
+  backbone_indices: [5, 11, 17, 23]
+  head: mla
+  align_corners: True
+
+optimizer:
+  type: SGD
+  momentum: 0.9
+  weight_decay: 0.0
+
+lr_scheduler:
+  type: PolynomialDecay
+  learning_rate: 0.01
+  end_lr: 1.0e-4
+  power: 0.9
+
+loss:
+  types:
+    - type: CrossEntropyLoss
+    - type: CrossEntropyLoss
+    - type: CrossEntropyLoss
+    - type: CrossEntropyLoss
+    - type: CrossEntropyLoss
+  coef: [1, 0.4, 0.4, 0.4, 0.4]
+
+test_config:
+    is_slide: True
+    crop_size: [769, 769]
+    stride: [512, 512]
