@@ -1,1 +1,1 @@
-python tools/predict.py --config myconfigs/segformer_ori_b5_srtm_1024x1024_100k.yml --model_path proposed_segformer.pdparams --image_path data/block_49.png --save_dir output --img_channel 1
+python tools/predict.py --config myconfigs/segformer_b5_srtm_1024x1024_100k.yml --model_path proposed_segformer.pdparams --image_path data/block_49.png --save_dir output --img_channel 1
